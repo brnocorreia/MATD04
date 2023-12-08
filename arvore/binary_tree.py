@@ -9,18 +9,6 @@ class BinaryTree:
         else:
             self.root = None
     
-    #Percurso em ordem simétrica
-    def simetric_traversal(self, node=None):
-        if node is None:
-            node = self.root
-        if node.left:
-            print('(', end='')
-            self.simetric_traversal(node.left)
-        print(node, end='')
-        if node.right:
-            self.simetric_traversal(node.right)
-            print(')', end='')
-
     #Percurso em pós ordem
     def post_order_traversal(self, node=None):
         if node is None:
@@ -31,15 +19,16 @@ class BinaryTree:
             self.post_order_traversal(node.right)
         print(node)
     
-    #Percurso em ordem simétrica
+    #Percurso em ordem
     def inorder_traversal(self, node=None):
         if node is None:
             node = self.root
-        if node.left:
-            self.inorder_traversal(node.left)
-        print(node, end=' ')
-        if node.right:
-            self.inorder_traversal(node.right)
+        if node:
+            if node.left:
+                self.inorder_traversal(node.left)
+            print(node)
+            if node.right:
+                self.inorder_traversal(node.right)
 
     def height(self, node=None):
         if node is None:
@@ -74,71 +63,46 @@ class BinarySearchTree(BinaryTree):
     def search(self, value):
         return self.__search(value, self.root)
     
+    def remove(self, value, node=None):
+        if node is None:
+            node = self.root
+        
+        if node is None:
+            return node
+        
+        if value < node.data:
+            node.left = self.remove(value, node.left)
+        elif value > node.data:
+            node.right = self.remove(value, node.right)
+        else:
+            if node.left is None:
+                return node.right
+            if node.right is None:
+                return node.left
+            else:
+                sub = self.__min(node.right)
+                node.data = sub
+                node.right = self.remove(sub, node.right)
+
+        return node
+    
     def __search(self, value, node):
         if node is None or node.data == value:
             return BinarySearchTree(node)
         if value < node.data:
-            self.__search(value, node.left)
+            return self.__search(value, node.left)
         return self.__search(value, node.right)
-
-
-if __name__ == "__main__":
-    # root = Node(7)
-    # tree = BinaryTree(root)
-
-    # tree.root.left = Node(18)
-    # tree.root.right = Node(14)
-
-    # print(tree.root)
-    # print(tree.root.right)
-    # print(tree.root.left)
-
-    # tree = BinaryTree()
-    # n1 = Node('I')
-    # n2 = Node('N')
-    # n3 = Node('S')
-    # n4 = Node('C')
-    # n5 = Node('R')
-    # n6 = Node('E')
-    # n7 = Node('V')
-    # n8 = Node('A')
-    # n9 = Node('5')
-    # n0 = Node('3')
-
-    # n6.left = n7
-    # n6.right = n8
-    # n5.left = n6
-    # n5.right = n9
-    # n3.left = n4
-    # n3.right = n5
-    # n2.left = n1
-    # n2.right = n3
     
-    # tree.root = n2
+    def __min(self, node=None):
+        if node is None:
+            node = self.root
+        while node.left:
+            node = node.left
+        return node.data
 
-    tree = BinaryTree()
-    n1 = Node('I')
-    n2 = Node('N')
-    n3 = Node('S')
-    n4 = Node('C')
-    n5 = Node('R')
-    n6 = Node('E')
-    n7 = Node('V')
-    n8 = Node('A')
-    n9 = Node('5')
-    n0 = Node('3')
-
-    n0.left = n6
-    n0.right = n9
-    n6.left = n1
-    n6.right = n5
-    n5.left = n2
-    n5.right = n4
-    n4.right = n3
-    n9.left = n8
-    n8.right = n7
-
-    tree.root = n0
-
-    tree.post_order_traversal()
-    print(f'A altura da árvore é {tree.height()}')
+    def __max(self, node=None):
+        if node is None:
+            node = self.root
+        while node.right:
+            node = node.right
+        return node.data
